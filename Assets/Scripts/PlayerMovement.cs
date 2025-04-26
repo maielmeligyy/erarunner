@@ -13,10 +13,15 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool isDead = false;
+    private bool isInvulnerable = false;
+    private float originalSpeed;
+    private GameManager gameManager;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        originalSpeed = speed;
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Update()
@@ -39,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Obstacle") && !isDead)
+        if (collision.gameObject.CompareTag("Obstacle") && !isDead && !isInvulnerable)
         {
             lives--;
             Debug.Log("Hit obstacle! Lives left: " + lives);
@@ -54,8 +59,44 @@ public class PlayerMovement : MonoBehaviour
                 GameOver();
             }
         }
+        else if (collision.gameObject.CompareTag("Obstacle") && isInvulnerable)
+        {
+            // If player has shield, just destroy the obstacle without losing life
+            Destroy(collision.gameObject);
+        }
+        else if (collision.gameObject.CompareTag("Collectible"))
+        {
+            // Handle collectible pickup (era transition triggers)
+            Destroy(collision.gameObject);
+            if (gameManager != null)
+            {
+                gameManager.TriggerEraPuzzle();
+            }
+        }
+        else if (collision.gameObject.CompareTag("Powerup"))
+        {
+            // Determine powerup type from the collectible
+            PowerupManager.PowerupType type = PowerupManager.PowerupType.Random;
+            
+            PowerupCollectible powerupCollectible = collision.gameObject.GetComponent<PowerupCollectible>();
+            if (powerupCollectible != null)
+            {
+                type = powerupCollectible.powerupType;
+            }
+            
+            // Activate the powerup
+            PowerupManager powerupManager = FindObjectOfType<PowerupManager>();
+            if (powerupManager != null)
+            {
+                powerupManager.ActivatePowerup(type);
+            }
+            
+            // Destroy the powerup object
+            Destroy(collision.gameObject);
+        }
     }
 
+    // Called when player runs out of lives
     private void GameOver()
     {
         isDead = true;
@@ -68,6 +109,33 @@ public class PlayerMovement : MonoBehaviour
             gameOverPanel.SetActive(true);
         }
 
+        // Notify the GameManager
+        if (gameManager != null)
+        {
+            gameManager.GameOver();
+        }
+
         Debug.Log("Game Over");
+    }
+    
+    // For powerups
+    public void SetInvulnerable(bool invulnerable)
+    {
+        isInvulnerable = invulnerable;
+    }
+    
+    public void ResetSpeed()
+    {
+        speed = originalSpeed;
+    }
+    
+    public void AddLife()
+    {
+        // Only add life if not at max
+        if (lives < lifeIcons.Length)
+        {
+            lives++;
+            lifeIcons[lives-1].SetActive(true);
+        }
     }
 }
