@@ -9,13 +9,14 @@ public class PlayerMovement : MonoBehaviour
 
     public int lives = 4;
     public GameObject[] lifeIcons;
-
+    public int score = 0;
     private Rigidbody2D rb;
     private bool isGrounded;
     private bool isDead = false;
     private bool isInvulnerable = false;
     private float originalSpeed;
     private GameManager gameManager;
+    private int shieldHitsRemaining = 0;
 
     private void Start()
     {
@@ -23,7 +24,12 @@ public class PlayerMovement : MonoBehaviour
         originalSpeed = speed;
         gameManager = FindObjectOfType<GameManager>();
     }
-
+    public void ActivateShield(int hits)
+    {
+        shieldHitsRemaining = hits;
+        isInvulnerable = true;
+        Debug.Log("Shield activated for " + hits + " obstacle(s).");
+    }
     private void Update()
     {
         if (!isDead)
@@ -44,20 +50,56 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Obstacle") && !isDead && !isInvulnerable)
+        if (collision.gameObject.CompareTag("Obstacle") && !isDead)
         {
-            lives--;
-            Debug.Log("Hit obstacle! Lives left: " + lives);
-            Destroy(collision.gameObject);
-            if (lives >= 0 && lives < lifeIcons.Length)
+            if (isInvulnerable)
             {
-                lifeIcons[lives].SetActive(false); // Hide one life icon
+                shieldHitsRemaining--;
+                Debug.Log("Shield absorbed a hit! Remaining: " + shieldHitsRemaining);
+
+                if (shieldHitsRemaining <= 0)
+                {
+                    isInvulnerable = false;
+                    Debug.Log("Shield expired.");
+                }
+
+                Destroy(collision.gameObject);
+            }
+            else
+            {
+                lives--;
+                Debug.Log("Hit obstacle! Lives left: " + lives);
+                Destroy(collision.gameObject);
+
+                if (lives >= 0 && lives < lifeIcons.Length)
+                {
+                    lifeIcons[lives].SetActive(false);
+                }
+
+                if (lives <= 0)
+                {
+                    Destroy(gameObject);
+                    GameOver();
+                }
+            }
+        }
+
+        if (collision.gameObject.CompareTag("Coin") && !isDead)
+        {
+
+            Debug.Log("Coin collected!");
+            Destroy(collision.gameObject);
+
+            if (ScoreManager.Instance != null)
+            {
+                ScoreManager.Instance.AddScore(1);
+            }
+            else
+            {
+                Debug.LogWarning("ScoreManager is missing in scene.");
             }
 
-            if (lives <= 0)
-            {
-                GameOver();
-            }
+
         }
         else if (collision.gameObject.CompareTag("Obstacle") && isInvulnerable)
         {
@@ -101,19 +143,18 @@ public class PlayerMovement : MonoBehaviour
     {
         isDead = true;
         rb.velocity = Vector2.zero;
-        this.enabled = false;
+        //this.enabled = false;
 
-        GameObject gameOverPanel = GameObject.Find("GameOverPanel");
-        if (gameOverPanel != null)
+        if (ScoreManager.Instance != null)
         {
-            gameOverPanel.SetActive(true);
+            ScoreManager.Instance.ShowGameOver();
         }
 
         // Notify the GameManager
-        if (gameManager != null)
-        {
-            gameManager.GameOver();
-        }
+        //if (gameManager != null)
+        //{
+        //    gameManager.GameOver();
+        //}
 
         Debug.Log("Game Over");
     }

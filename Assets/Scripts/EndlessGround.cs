@@ -33,7 +33,9 @@ public class EndlessGround : MonoBehaviour
             Destroy(parent.GetChild(i).gameObject);
         }
     }
-    public Transform GetActiveGround() {
+    public Transform GetActiveGround()
+    {
         return grounds[index];
     }
+
 }

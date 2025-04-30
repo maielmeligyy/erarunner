@@ -832,9 +832,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ffe8c4517b094010b64949d40cb3674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usernameInput: {fileID: 635281605}
-  passwordInput: {fileID: 2051599520}
-  dbManager: {fileID: 1036974290}
+  idInput: {fileID: 635281605}
+  resultText: {fileID: 0}
 --- !u!1 &1036974288
 GameObject:
   m_ObjectHideFlags: 0
@@ -1213,7 +1212,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Username
+  m_text: User ID
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

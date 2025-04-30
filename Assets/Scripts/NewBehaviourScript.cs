@@ -7,13 +7,13 @@ public class NewBehaviourScript : MonoBehaviour
     public float speed;
     public Renderer renderObject;
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
     renderObject.material.mainTextureOffset += new Vector2(speed * Time.deltaTime, 0f);
     }

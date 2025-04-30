@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ObstacleGenerator : MonoBehaviour
@@ -24,7 +23,7 @@ public class ObstacleGenerator : MonoBehaviour
     private void SpawnObstacle()
     {
         Vector3 spawnPosition = new Vector3(spawnX, spawnY, 0);
-       var obs = Instantiate(obstaclePrefab, spawnPosition, Quaternion.identity);
-        obs.transform.parent = endless.GetActiveGround();
+        Instantiate(obstaclePrefab, spawnPosition, Quaternion.identity);
+        Debug.Log("obstacle spawned at: " + spawnPosition);
     }
 }
