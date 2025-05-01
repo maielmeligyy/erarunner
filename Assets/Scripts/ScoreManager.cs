@@ -70,7 +70,7 @@ public void AddScore(int amount)
         else
         {
             Debug.Log("Wrong answer!");
-            // Optional: show feedback or retry logic
+            
         }
     }
 }

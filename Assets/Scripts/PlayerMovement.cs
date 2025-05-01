@@ -143,18 +143,14 @@ public class PlayerMovement : MonoBehaviour
     {
         isDead = true;
         rb.velocity = Vector2.zero;
-        //this.enabled = false;
+        
 
         if (ScoreManager.Instance != null)
         {
             ScoreManager.Instance.ShowGameOver();
         }
 
-        // Notify the GameManager
-        //if (gameManager != null)
-        //{
-        //    gameManager.GameOver();
-        //}
+        
 
         Debug.Log("Game Over");
     }

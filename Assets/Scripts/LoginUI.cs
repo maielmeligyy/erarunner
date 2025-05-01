@@ -4,51 +4,45 @@ using UnityEngine.SceneManagement;
 
 public class LoginUI : MonoBehaviour
 {
-    public TMP_InputField idInput;
+    public TMP_InputField emailInput;
+    public TMP_InputField passwordInput;
     public TMP_Text resultText;
-
-    private void Start()
-    {
-        if (idInput == null || resultText == null)
-        {
-            Debug.LogError("LoginUI: Missing UI references!");
-        }
-    }
 
     public void OnLoginButtonPressed()
     {
-        Debug.Log("Login button pressed");
+        string email = emailInput.text.Trim();
+        string password = passwordInput.text;
 
-        if (string.IsNullOrWhiteSpace(idInput.text))
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            resultText.text = "ID field is empty.";
-            Debug.LogWarning("Login failed: ID field is empty.");
+            resultText.text = "Enter both email and password.";
             return;
         }
 
-        if (int.TryParse(idInput.text.Trim(), out int userId))
+        if (DatabaseManager.Instance == null)
         {
-            Debug.Log("Attempting login with ID: " + userId);
+            resultText.text = "Login system not ready. Try again later.";
+            return;
+        }
 
-            StartCoroutine(DatabaseManager.Instance.LoginUser(userId, (response) =>
+        StartCoroutine(DatabaseManager.Instance.LoginUser(email, password, (response) =>
+        {
+            Debug.Log("Login response: " + response);
+
+            if (response.Contains("Login successful"))
             {
-                Debug.Log("Backend response: " + response);
+                resultText.text = "Login successful!";
+                SceneManager.LoadScene("SampleScene"); 
+            }
+            else
+            {
+                resultText.text = "Invalid email or password.";
+            }
+        }));
+    }
 
-                if (response.StartsWith("{")) // crude check: if it's a valid JSON object
-                {
-                    resultText.text = "Login successful!";
-                    SceneManager.LoadScene("SampleScene");
-                }
-                else
-                {
-                    resultText.text = "Login failed: " + response;
-                }
-            }));
-        }
-        else
-        {
-            resultText.text = "Invalid ID format.";
-            Debug.LogWarning("Login failed: ID is not a number.");
-        }
+    public void OnSignUpButtonPressed()
+    {
+        SceneManager.LoadScene("SignUpScene");
     }
 }

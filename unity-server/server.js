@@ -19,21 +19,36 @@ const db = new sqlite3.Database('./users.db', (err) => {
 
 // Create users table
 db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
-    email TEXT,
-    score INTEGER DEFAULT 0
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT,
+  email TEXT UNIQUE,
+  password TEXT,
+  score INTEGER DEFAULT 0
 )`);
+
 
 // 1. Register user
 app.post('/register', (req, res) => {
-  const { username, email } = req.body;
-  const sql = `INSERT INTO users (username, email) VALUES (?, ?)`;
-  db.run(sql, [username, email], function (err) {
+  const { username, email, password } = req.body;
+  const sql = `INSERT INTO users (email, password) VALUES (?, ?)`;
+
+  db.run(sql, [email, password], function (err) {
     if (err) return res.status(400).json({ error: err.message });
-    res.json({ id: this.lastID, username, email });
+    res.json({ id: this.lastID, email });
   });
 });
+// Login user
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  const sql = `SELECT * FROM users WHERE email = ? AND password = ?`;
+
+  db.get(sql, [email, password], (err, user) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!user) return res.status(401).json({ error: 'Invalid email or password' });
+    res.json({ message: 'Login successful', user });
+  });
+});
+
 
 // 2. Get user by ID
 app.get('/user/:id', (req, res) => {
