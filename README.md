@@ -6,34 +6,25 @@ A 2D endless runner game where players travel through different historical eras,
 
 In EraRunner, players log in to access a fast-paced endless runner where they:
 
-1. Run through historical eras (Ancient Egypt, Medieval, Industrial Revolution, Future, etc.)
-2. Dodge era-specific obstacles that get faster as the score increases
-3. Collect items that trigger era-transition puzzles
-4. Solve mini-puzzles to earn powerups before entering the next era
-5. Maintain a high score that increases faster the longer they survive
+1. Run through historical eras (Stone era, Ancient Egypt, and more can be added in future enhancements etc.)
+3. Jump era-specific obstacles that get faster as the score increases
+4. Collect coins that increase score
+5. Solve mini-riddles to earn powerups before entering the next era
 
 ## Game Features
 
-- Login/signup system with username and password (currently test/1234)
+- Login/signup system with username and password 
 - Multiple historical eras with unique visual themes
-- Increasingly difficult endless runner gameplay
-- Score system that saves the player's high score
-- Four mini-puzzle types between eras:
-  - Memory match
-  - Quick-time events
-  - Simple history quizzes
-  - Pattern sequences
+- an era-related riddle between eras:
 - Powerup system with various bonuses:
   - Shield (temporary invulnerability)
-  - Speed boost
-  - Score multiplier
   - Extra lives
 - Lives system with UI heart icons
 
 ## Controls
 
-- Tap or click to jump over obstacles
-- Interactive puzzles between eras
+- Tap or click the arrow to jump over obstacles
+- Interactive riddle between eras
 
 ## Technical Implementation
 
@@ -41,8 +32,8 @@ The game is built with several core systems:
 
 - **GameManager**: Controls game flow, score, eras, and overall game state
 - **PlayerMovement**: Handles player controls, collision detection, and lives
-- **PuzzleManager**: Implements the four different puzzle types between eras
-- **PowerupManager**: Manages different powerup effects and their durations
+- **PuzzleManager**: Implements the four different puzzle types between eras - not fully impleemented in game
+- **PowerupManager**: Manages different powerup effects and their durations - not fully implemented in game
 - **ObstacleGenerator**: Dynamically spawns obstacles based on the current era
 - **EndlessGround**: Creates the scrolling ground effect with infinite terrain
 
